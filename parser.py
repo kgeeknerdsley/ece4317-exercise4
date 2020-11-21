@@ -5,6 +5,28 @@ test_dict = open("/home/kevin/Desktop/ECE 4317 Exercises/ece4317-exercise4/testd
 LEN_ENGDICT = 219492
 LEN_TESTDICT = 10
 
+#like 75% baked idea for testing the difference by one character at any point
+#called the Levenshtein Distance, measures the steps it would take to produce a new word by a insertion
+#if we find a good pair, the Levenshtein Distance should be 1. Not sure why it always returns 0 so I offset it by one, but we don't have duplicates so w/e
+#identical words and a single offset (goal) both produce 0
+#https://en.wikipedia.org/wiki/Levenshtein_distance
+def levDistance(a, b):
+    len_a = len(a)
+    len_b = len(b)
+    
+    if(len_b == 0):
+        return len_a
+    elif(len_a == 0):
+        return len_b
+    elif(a[0] == b[0]):
+        return levDistance(a[1:len_a-1],b[1:len_b-1])
+    else:
+        return 1 + levDistance(a, b[1:len_b-1])
+        
+#how to use it!
+res = levDistance("bat","cat") + 1
+print(res)
+
 print("Which pattern do you want to search for?")
 print("1) Words that differ by e at the end")
 print("2) Words that differ by a single letter")
