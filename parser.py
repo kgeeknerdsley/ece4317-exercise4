@@ -1,5 +1,10 @@
+import difflib
+from difflib import SequenceMatcher
+
 dictionary_eng = open("/home/kevin/Desktop/ECE 4317 Exercises/ece4317-exercise4/englishdict.txt","r",encoding="cp1252")
+dictionary_danish = open("/home/kevin/Desktop/ECE 4317 Exercises/ece4317-exercise4/danishdict.txt","r",encoding="cp1252")
 results_p1 = open("/home/kevin/Desktop/ECE 4317 Exercises/ece4317-exercise4/results_p1.txt","w")
+results_p2 = open("/home/kevin/Desktop/ECE 4317 Exercises/ece4317-exercise4/results_p2.txt","w")
 test_dict = open("/home/kevin/Desktop/ECE 4317 Exercises/ece4317-exercise4/testdict.txt","r")
 
 LEN_ENGDICT = 219492
@@ -24,7 +29,7 @@ def levDistance(a, b):
         return 1 + levDistance(a, b[1:len_b-1])
         
 #how to use it!
-res = levDistance("bat","cat") + 1
+res = levDistance("abacinate","abaculus")
 print(res)
 
 print("Which pattern do you want to search for?")
@@ -66,11 +71,123 @@ if(choice == "1"):
 
 elif(choice == "2"):
     print("Searching for pattern 2")
+    #take length of both words
+    #add the lengths together
+    #figure out the bigger length
+    #if largest length - ratio * (added lengths) / 2 == 1, we found a differ-by-one case
 
-    print("word" + "e")
+    line = 0
+    belowIndex = 0
+    matchCount = 0
+    firstPass = 0
+    nextPos = 0
 
+    seqMatch = SequenceMatcher(None, "a", "aa")
+
+    while(line <= 93): #arbitrary limit
+        currentWord = dictionary_eng.readline()
+        currentWord = currentWord.strip()
+        print("Current word is: " + currentWord)
+
+        seqMatch.set_seq1(currentWord)
+        lenCurrent = len(currentWord)
+
+        belowIndex = line+1
+        firstPass = 0
+        while(belowIndex <= LEN_ENGDICT - 1):
+            if(firstPass == 0):
+                nextPos = dictionary_eng.tell()
+            
+            testWord = dictionary_eng.readline()
+            testWord = testWord.strip()
+            seqMatch.set_seq2(testWord)
+
+            lenTest = len(testWord)
+
+            addedLengths = lenCurrent + lenTest
+
+            if(lenCurrent < lenTest):
+                ratio = lenTest - (seqMatch.ratio() * (addedLengths/2))
+            else:
+                ratio = lenCurrent - (seqMatch.ratio() * (addedLengths/2))
+
+            #print(ratio)
+            if(abs(lenCurrent-lenTest) == 1):
+                if(ratio == 1.0):
+                    print("Found match!")
+                    match = currentWord + "/" + testWord + "\n"
+                    print(match)
+                    results_p2.write(match)
+
+            belowIndex = belowIndex + 1
+            firstPass = firstPass + 1
+        
+        dictionary_eng.seek(nextPos)
+        line = line + 1
+        print("New line is: " + str(line))
+        #print("Current word is: " + currentWord)
+    
+
+            
 elif(choice == "3"):
     print("Searching for pattern 3")
+
+    #take length of both words
+    #add the lengths together
+    #figure out the bigger length
+    #if largest length - ratio * (added lengths) / 2 == 1, we found a differ-by-one case
+
+    line = 0
+    belowIndex = 0
+    matchCount = 0
+    firstPass = 0
+    nextPos = 0
+
+    seqMatch = SequenceMatcher(None, "a", "aa")
+
+    while(line <= 93): #arbitrary limit
+        currentWord = dictionary_danish.readline()
+        currentWord = currentWord.strip()
+        print("Current word is: " + currentWord)
+
+        seqMatch.set_seq1(currentWord)
+        lenCurrent = len(currentWord)
+
+        belowIndex = line+1
+        firstPass = 0
+        while(belowIndex <= LEN_ENGDICT - 1):
+            if(firstPass == 0):
+                nextPos = dictionary_danish.tell()
+            
+            testWord = dictionary_danish.readline()
+            testWord = testWord.strip()
+            seqMatch.set_seq2(testWord)
+
+            lenTest = len(testWord)
+
+            addedLengths = lenCurrent + lenTest
+
+            if(lenCurrent < lenTest):
+                ratio = lenTest - (seqMatch.ratio() * (addedLengths/2))
+            else:
+                ratio = lenCurrent - (seqMatch.ratio() * (addedLengths/2))
+
+            #print(ratio)
+
+            if(ratio == 1.0 and abs(lenCurrent-lenTest) == 1):
+                print("Found match!")
+                match = currentWord + "/" + testWord + "\n"
+                print(match)
+                results_p2.write(match)
+            
+            belowIndex = belowIndex + 1
+            firstPass = firstPass + 1
+        
+        dictionary_danish.seek(nextPos)
+        line = line + 1
+        print("New line is: " + str(line))
+        #print("Current word is: " + currentWord)
+    
 
 else:
     print("Select a correct value. Relaunch program")
